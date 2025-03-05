@@ -51,7 +51,7 @@ def test_cannot_reuse_taken_username_for_registration():
         }
     )
     response, status = process_registration(creds)
-    assert "Username already taken" in json.dumps(response)
+    assert "username already taken" in json.dumps(response).lower()
     assert status == 400
 
 
@@ -81,6 +81,18 @@ def test_login_with_wrong_password():
         {
             "username": existing_username,
             "hashedPassword": hashed_nonexistent_password,
+        }
+    )
+    response, status = process_login(creds)
+    assert "invalid" in json.dumps(response).lower()
+    assert status == 401
+
+
+def test_login_with_wrong_or_nonexistent_username():
+    creds = json.dumps(
+        {
+            "username": nonexistent_username,
+            "hashedPassword": hashed_existing_password,
         }
     )
     response, status = process_login(creds)
