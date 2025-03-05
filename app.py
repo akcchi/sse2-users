@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from utils import process_registration, process_login
+from utils.utils import process_registration, process_login
 
 app = Flask(__name__)
 

@@ -20,3 +20,12 @@ def test_reject_no_username_supplied_when_registering():
     response, status = process_registration(creds)
     assert "input username" in json.dumps(response)
     assert status == 400
+
+
+def test_reject_no_password_supplied_when_registering():
+    creds = json.dumps(
+        {"username": nonexistent_username, "password": empty_password}
+    )
+    response, status = process_registration(creds)
+    assert "input password" in json.dumps(response)
+    assert status == 400
