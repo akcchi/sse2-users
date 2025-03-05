@@ -1,8 +1,9 @@
-from flask import jsonify
+# from flask import jsonify
 from supabase import create_client
 import os
 import datetime
 import jwt
+import json
 
 # Supabase connection config
 # database already exists
@@ -19,26 +20,26 @@ def process_registration(user_creds):
     - "username": username
     - "password": hashed password
     """
-
-    username = user_creds["username"]
-    password = user_creds["password"]
+    user_creds_dict = json.loads(user_creds)
+    username = user_creds_dict["username"]
+    password = user_creds_dict["password"]
 
     # invalid: empty username or pw given
     if username == "":
-        return jsonify({"message": "Please input username"}), 400
+        return ({"message": "Please input username"}), 400
     elif password == "":
-        return jsonify({"message": "Please input password"}), 400
+        return ({"message": "Please input password"}), 400
 
     # check if username taken
     user = client.table("users").select("*").eq("username", username).execute()
     if user.data:
-        return jsonify({"message": "Username already taken"}), 400
+        return ({"message": "Username already taken"}), 400
 
     # if username available, make user account
     client.table("users").insert(
         {"username": username, "password": password}
     ).execute()
-    return jsonify({"message": "Registration successful"}), 201
+    return ({"message": "Registration successful"}), 201
 
 
 def process_login(user_creds):
@@ -47,14 +48,14 @@ def process_login(user_creds):
     - "username": username
     - "password": hashed password
     """
-
-    username = user_creds["username"]
-    password = user_creds["password"]
+    user_creds_dict = json.loads(user_creds)
+    username = user_creds_dict["username"]
+    password = user_creds_dict["password"]
 
     if username == "":
-        return jsonify({"message": "Please input username"}), 400
+        return ({"message": "Please input username"}), 400
     elif password == "":
-        return jsonify({"message": "Please input password"}), 400
+        return ({"message": "Please input password"}), 400
 
     user = client.table("users").select("*").eq("username", username).execute()
 
@@ -68,6 +69,6 @@ def process_login(user_creds):
             SECRET_KEY,
             algorithm="HS256",
         )
-        return jsonify({"token": token}), 200
+        return ({"token": token}), 200
     else:
-        return jsonify({"message": "Invalid username or password"}), 401
+        return ({"message": "Invalid username or password"}), 401
