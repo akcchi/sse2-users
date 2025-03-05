@@ -9,7 +9,7 @@ empty_password = ""
 nonexistent_username = "nonexistent"
 nonexistent_password = "asdfghjkl"
 
-existing_username = "test_acc"
+existing_username = "dummy_acc"
 existing_password = "123"
 
 # get password hash
@@ -98,3 +98,14 @@ def test_login_with_wrong_or_nonexistent_username():
     response, status = process_login(creds)
     assert "invalid" in json.dumps(response).lower()
     assert status == 401
+
+
+def test_login_success_with_correct_username_and_password():
+    creds = json.dumps(
+        {
+            "username": existing_username,
+            "hashedPassword": hashed_existing_password,
+        }
+    )
+    _, status = process_login(creds)
+    assert status == 200
