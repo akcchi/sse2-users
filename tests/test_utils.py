@@ -74,3 +74,15 @@ def test_reject_no_password_on_login():
     response, status = process_login(creds)
     assert "input password" in json.dumps(response)
     assert status == 400
+
+
+def test_login_with_wrong_password():
+    creds = json.dumps(
+        {
+            "username": existing_username,
+            "hashedPassword": hashed_nonexistent_password,
+        }
+    )
+    response, status = process_login(creds)
+    assert "invalid" in json.dumps(response).lower()
+    assert status == 401
