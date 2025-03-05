@@ -35,7 +35,7 @@ jobs:
             DB_URL: ${{ secrets.DB_URL }}
             DB_KEY: ${{ secrets.DB_KEY }}
             SECRET_KEY: ${{ secrets.SECRET_KEY }}
-  build-and-push-image:
+  build-push-deploy-image:
     needs: [python-formatting, unit-test]
     runs-on: ubuntu-latest
     steps:
@@ -55,4 +55,11 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ghcr.io/akcchi/sse2-users:latest
+          tags: ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest
+      - name: ImPaaS-Deploy
+        id: impaas-deploy
+        uses: /impaas/impaas-deploy@v3
+        with:
+          app-name: gyya-sse2-users-service
+          deployment-token: ${{ secrets.IMPAAS_DEPLOY_TOKEN }}
+          method: DOCKER_IMAGE
