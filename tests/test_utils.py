@@ -1,4 +1,4 @@
-from utils.utils import process_registration
+from utils.utils import process_registration, process_login
 import json
 import hashlib
 
@@ -24,7 +24,10 @@ hashed_nonexistent_password = sha256_hash2.hexdigest()
 
 def test_reject_no_username_supplied_when_registering():
     creds = json.dumps(
-        {"username": empty_username, "password": hashed_nonexistent_password}
+        {
+            "username": empty_username,
+            "hashedPassword": hashed_nonexistent_password,
+        }
     )
     response, status = process_registration(creds)
     assert "input username" in json.dumps(response)
@@ -33,7 +36,7 @@ def test_reject_no_username_supplied_when_registering():
 
 def test_reject_no_password_supplied_when_registering():
     creds = json.dumps(
-        {"username": nonexistent_username, "password": empty_password}
+        {"username": nonexistent_username, "hashedPassword": empty_password}
     )
     response, status = process_registration(creds)
     assert "input password" in json.dumps(response)
@@ -44,9 +47,30 @@ def test_cannot_reuse_taken_username_for_registration():
     creds = json.dumps(
         {
             "username": existing_username,
-            "password": hashed_nonexistent_password,
+            "hashedPassword": hashed_nonexistent_password,
         }
     )
     response, status = process_registration(creds)
     assert "Username already taken" in json.dumps(response)
+    assert status == 400
+
+
+def test_reject_no_username_on_login():
+    creds = json.dumps(
+        {
+            "username": empty_username,
+            "hashedPassword": hashed_existing_password,
+        }
+    )
+    response, status = process_login(creds)
+    assert "input username" in json.dumps(response)
+    assert status == 400
+
+
+def test_reject_no_password_on_login():
+    creds = json.dumps(
+        {"username": existing_username, "hashedPassword": empty_password}
+    )
+    response, status = process_login(creds)
+    assert "input password" in json.dumps(response)
     assert status == 400

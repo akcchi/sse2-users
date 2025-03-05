@@ -18,11 +18,11 @@ def process_registration(user_creds):
     """
     JSON argument contents:
     - "username": username
-    - "password": hashed password
+    - "hashedPassword": hashed password
     """
     user_creds_dict = json.loads(user_creds)
     username = user_creds_dict["username"]
-    password = user_creds_dict["password"]
+    password = user_creds_dict["hashedPassword"]
 
     # invalid: empty username or pw given
     if username == "":
@@ -46,11 +46,11 @@ def process_login(user_creds):
     """
     JSON argument contents:
     - "username": username
-    - "password": hashed password
+    - "hashedPassword": hashed password
     """
     user_creds_dict = json.loads(user_creds)
     username = user_creds_dict["username"]
-    password = user_creds_dict["password"]
+    password = user_creds_dict["hashedPassword"]
 
     if username == "":
         return ({"message": "Please input username"}), 400
