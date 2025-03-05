@@ -24,7 +24,9 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: 3.12
+        name: Set env variables
+        run: export DB_URL="${{ secrets.DB_URL }}" && export DB_KEY="${{ secrets.DB_KEY }}" && export SECRET_KEY="${{ secrets.SECRET_KEY }}"
       - name: Install packages
-        run: export DB_URL=${{ secrets.DB_URL }} && export DB_KEY=${{ secrets.DB_KEY }} && export SECRET_KEY=${{ secrets.SECRET_KEY }} && pip install -r requirements.txt && pip install pytest
+        run: pip install -r requirements.txt && pip install pytest
       - name: Run unit tests using pytest
         run: pytest
